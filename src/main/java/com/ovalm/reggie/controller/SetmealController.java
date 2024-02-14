@@ -14,6 +14,8 @@ import com.ovalm.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -82,6 +84,7 @@ public class SetmealController {
      * @return
      */
     @PostMapping
+    @CacheEvict(value = "setmealCache", allEntries = true)
     public R save(@RequestBody SetmealDto setmealDto){
         setmealService.saveWithSetmealDish(setmealDto);
         return R.ok();
@@ -124,6 +127,7 @@ public class SetmealController {
      * @return
      */
     @DeleteMapping
+    @CacheEvict(value = "setmealCache", allEntries = true)
     public R delete(Long[] ids){
         setmealService.deleteIds(ids);
 
@@ -137,6 +141,7 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/list")
+    @Cacheable(value = "setmealCache", key = "#setmeal.categoryId + '_' + #setmeal.status")
     public R list(Setmeal setmeal){
         QueryWrapper<Setmeal> wrapper = new QueryWrapper<>();
         if(setmeal.getCategoryId() != null){

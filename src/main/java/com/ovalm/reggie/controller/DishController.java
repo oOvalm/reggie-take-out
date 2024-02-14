@@ -15,18 +15,24 @@ import com.ovalm.reggie.service.DishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 
 @RestController
 @RequestMapping("/dish")
 @Slf4j
 public class DishController {
+
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
 
     @Autowired
     private DishService dishService;
@@ -87,6 +93,9 @@ public class DishController {
     @PostMapping
     public R save(@RequestBody DishDto dto){
         dishService.saveWithFlavor(dto);
+        // 精确清理分类id
+        String key = "dish::" + dto.getCategoryId() + "_" + dto.getStatus();
+        redisTemplate.delete(key);
         return R.ok();
     }
 
@@ -109,6 +118,8 @@ public class DishController {
     @PutMapping
     public R update(@RequestBody DishDto dto){
         dishService.updateWithFlavor(dto);
+        Set<Object> keys = redisTemplate.keys("dish::*");
+        redisTemplate.delete(keys);
         return R.ok();
     }
 
@@ -158,6 +169,12 @@ public class DishController {
 
     @GetMapping("/list")
     public R list(Dish dish){
+        String key = "dish::" + dish.getCategoryId() + "_" + dish.getStatus();
+        List<DishDto> dtos = (List<DishDto>) redisTemplate.opsForValue().get(key);
+        if(dtos != null){
+            return R.ok().put("data", dtos);
+        }
+
         QueryWrapper<Dish> wrapper = new QueryWrapper<>();
         if(dish.getCategoryId() != null){
             wrapper.eq("category_id", dish.getCategoryId());
@@ -180,7 +197,7 @@ public class DishController {
             return dto;
         }).toList();
 
-
+        redisTemplate.opsForValue().set(key, list, 30, TimeUnit.MINUTES);
         return R.ok().put("data", list);
     }
 }
