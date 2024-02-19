@@ -67,6 +67,7 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid-spring-boot-starter</artifactId>
 			<version>1.2.21</version>
+<!--			<version>1.1.23</version>-->
 		</dependency>
 
 		<dependency>
@@ -83,6 +84,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
 		</dependency>
+
+<!--		<dependency>-->
+<!--			<groupId>org.apache.shardingsphere</groupId>-->
+<!--			<artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>-->
+<!--			<version>5.2.1</version>-->
+<!--		</dependency>-->
 
 	</dependencies>
 

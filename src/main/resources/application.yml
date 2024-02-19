@@ -5,18 +5,58 @@ spring:
     name: reggie_take_out
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://192.168.198.1:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
   data:
     redis:
-      host: 192.168.198.128
+      host: 192.168.198.100
       port: 6379
       password: 123456
       database: 0
   cache:
     redis:
       time-to-live: 1800000 # 缓存的过期时间
+
+#  shardingsphere:
+#    datasource:
+#      names: db_master,db_slave
+#      db_master:
+#        type: com.zaxxer.hikari.HikariDataSource
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        jdbc-url: jdbc:mysql://192.168.198.100:3306/reggie
+#        username: root
+#        password: A_wingkin45
+#      db_slave:
+#        type: com.zaxxer.hikari.HikariDataSource
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        jdbc-url: jdbc:mysql://192.168.198.101:3306/reggie
+#        username: root
+#        password: A_wingkin45
+#    rules:
+#      readwrite-splitting:
+#        data-sources:
+#          db_master:
+#            load-balancer-name: round_robin
+#            static-strategy:
+#              read-data-source-names:
+#                - db_slave
+#              write-data-source-name: db_master
+#          db_slave:
+#            load-balancer-name: round_robin
+#            static-strategy:
+#              read-data-source-names:
+#                - db_slave
+#              write-data-source-name: db_master
+
+
+
+
+#    props:
+#      sql-show: true
+#      sql-comment-parse-enabled: true
+
+
 
 mybatis-plus:
   configuration:
