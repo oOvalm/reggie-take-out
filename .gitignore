@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+src/main/resources/backend/
+src/main/resources/front/
+
